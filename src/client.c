@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:43:08 by atardif           #+#    #+#             */
-/*   Updated: 2023/03/17 11:09:18 by atardif          ###   ########.fr       */
+/*   Updated: 2023/03/22 16:50:15 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,22 @@
 void	send_char(char c, int pid)
 {
 	int	i;
-	unsigned char tmp;
+	int	mask;
 
-	i = 7;
-	tmp = 0;
-	
-
-
+	i = 0;
+	while (i < 7)
+	{
+		mask = 1;
+		mask = mask & c;
+		if (mask == 1)
+			kill(pid, SIGUSR1);
+		else 
+			kill(pid, SIGUSR2);
+		c = c >> 1;
+		i++;
+		usleep(500);
+	}
+}
 
 void	send_string(char *str, int pid)
 {
@@ -42,8 +51,7 @@ int	main(int argc, char **argv)
 	
 	if (argc == 3)
 	{ 
-		send_string(argv[2], ft_atoi(argv[1]);
-
+		send_string(argv[2], ft_atoi(argv[1]));
 	}
 	else
 		ft_printf("Usage : ./client [P.I.D. server] [string to send]");

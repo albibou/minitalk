@@ -31,7 +31,7 @@ ${NAME} :	${SERV_OBJS}
 		@toilet -f pagga.tlf --gay "Libft"
 		make all -C libft
 		clear
-		${CC} -o ${NAME} -g ${CFLAGS} ${SERV_OBJS} ${LIBFT}
+		${CC} -o ${NAME} ${CFLAGS} -g  ${SERV_OBJS} ${LIBFT}
 		clear
 	        @toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
 
@@ -40,7 +40,7 @@ ${NAME2} :	${CLIENT_OBJS}
 		@toilet -f pagga.tlf --gay "Libft"
 		make all -C libft
 		clear
-		${CC} -o ${NAME2} -g ${CFLAGS} ${CLIENT_OBJS} ${LIBFT}
+		${CC} -o ${NAME2} ${CFLAGS} -g  ${CLIENT_OBJS} ${LIBFT}
 		clear
 	        @toilet -f pagga.tlf --gay "Enjoy ${NAME2} !"
 	

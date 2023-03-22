@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 17:42:48 by atardif           #+#    #+#             */
-/*   Updated: 2023/03/19 21:14:51 by atardif          ###   ########.fr       */
+/*   Updated: 2023/03/22 15:35:51 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,28 +40,46 @@ void	display_binary_bis(char c)
 	printf("\n");
 }
 
-void	test_bitwise(void)
+int	sendchar(char c)
 {
-	char	c;
-	int	ref;
-	int	i;
 	int	mask;
 
+	mask = 1;
+	mask = mask & c;
+	if (mask == 1)
+		return (1);
+	else
+		return (0);
+}
+
+void	test_bitwise(char s)
+{
+	unsigned char	c;
+	int	i;
+	unsigned int	mask;
+
 	c = 0;
-	ref = 0;
 	i = 0;
 	mask = 1;
-	while (i < 8)
+	while (i < 7)
 	{
-		scanf("%d", &ref);
-		if (ref == 1)
+		if (sendchar(s) == 1)
 			c = c | mask;
-		else if (ref == 0)
-			c = c & mask;
-		display_binary_bis(c);
 		c = c << 1;
+		s = s >> 1;
 		i++;
 	}
+	mask = 0;
+	while (i >= 0)
+	{
+		mask = mask << 1;
+		if (c & 1 == 1)
+			mask = mask ^ 1;
+		c = c >> 1;
+		i--;
+	}
+	//display_binary(mask);
+	printf("%c", mask);
 
 }
 
@@ -69,24 +87,14 @@ void	test_bitwise(void)
 int	main(int argc, char **argv)
 {
 	(void)argc;
-	(void)argv;
-	/*
 	int	i;
 
 	i = 0;
 	while (argv[1][i])
 	{
-		display_binary(argv[1][i]);
+		test_bitwise(argv[1][i]);
 		i++;
-	}*/
-
-	test_bitwise();
-	/*printf("Size of char : %ld\n", sizeof(char));
-	printf("Size of unsigned char : %ld\n", sizeof(unsigned char));
-	printf("Size of int : %ld\n", sizeof(int));
-	printf("Size of unsigned int : %ld\n", sizeof(unsigned int));
-	printf("Size of long : %ld\n", sizeof(long));
-	printf("Size of unsigned long : %ld\n", sizeof(unsigned long));
-	printf("Size of long long : %ld\n", sizeof(long long));*/
+	}
+	printf("\n");
 	return(0);
 }
