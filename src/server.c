@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:40:23 by atardif           #+#    #+#             */
-/*   Updated: 2023/03/22 16:24:36 by atardif          ###   ########.fr       */
+/*   Updated: 2023/03/23 13:39:19 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	handle_sig(int sig)
 		while (i >= 0)
 		{
 			mask = mask << 1;
-			if (c & 1 == 1)
+			if (c & 1)
 				mask = mask ^ 1;
 			c = c >> 1;
 			i--;
@@ -54,6 +54,8 @@ void	handle_sig(int sig)
 
 int	main(int argc, char **argv)
 {
+	(void)argc;
+	(void)argv;
 
 	struct sigaction	sa;
 
@@ -65,6 +67,6 @@ int	main(int argc, char **argv)
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
-		sleep(1);
+		pause();
 	return (0);
 }

@@ -6,11 +6,13 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:43:08 by atardif           #+#    #+#             */
-/*   Updated: 2023/03/22 16:50:15 by atardif          ###   ########.fr       */
+/*   Updated: 2023/03/23 13:39:56 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
+int	can_send;
 
 void	send_char(char c, int pid)
 {
@@ -28,15 +30,17 @@ void	send_char(char c, int pid)
 			kill(pid, SIGUSR2);
 		c = c >> 1;
 		i++;
-		usleep(500);
+		usleep(1000);
 	}
 }
 
 void	send_string(char *str, int pid)
 {
 	int	i;
+	//struct sigaction	sa;
 
 	i = 0;
+	can_send = 1;
 	while (str[i])
 	{
 		send_char(str[i], pid);
@@ -47,7 +51,7 @@ void	send_string(char *str, int pid)
 
 int	main(int argc, char **argv)
 {
-	(void)argc;
+	(void)argc;;
 	
 	if (argc == 3)
 	{ 
