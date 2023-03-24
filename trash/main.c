@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 17:42:48 by atardif           #+#    #+#             */
-/*   Updated: 2023/03/22 15:35:51 by atardif          ###   ########.fr       */
+/*   Updated: 2023/03/24 17:57:53 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ int	sendchar(char c)
 {
 	int	mask;
 
-	mask = 1;
+	mask = 128;
 	mask = mask & c;
-	if (mask == 1)
+	if (mask == 128)
 		return (1);
 	else
 		return (0);
@@ -60,20 +60,32 @@ void	test_bitwise(char s)
 
 	c = 0;
 	i = 0;
-	mask = 1;
+	printf(" c : ");
+	display_binary_bis(c);
+	printf("\n");
+	printf(" s : ");
+	display_binary_bis(s);
+	printf("\n");
+	mask = 128;
 	while (i < 7)
 	{
 		if (sendchar(s) == 1)
 			c = c | mask;
-		c = c << 1;
-		s = s >> 1;
+		printf(" c : ");
+		display_binary_bis(c);
+		printf("\n");
+		printf(" s : ");
+		display_binary_bis(s);
+		printf("\n");
+		c = c >> 1;
+		s = s << 1;
 		i++;
 	}
 	mask = 0;
 	while (i >= 0)
 	{
 		mask = mask << 1;
-		if (c & 1 == 1)
+		if (c & 1)
 			mask = mask ^ 1;
 		c = c >> 1;
 		i--;
