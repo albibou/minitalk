@@ -30,28 +30,25 @@ void	send_char(char c, int pid)
 	int	i;
 	int	mask;
 	struct sigaction	sa;
-
+	
 	sa.sa_flags = 0;
 	sa.sa_handler = &handle_sig;
 	sigaction(SIGUSR1, &sa, NULL);
-	i = 0;
-	while (i < 7)
+	i = 7;
+	mask = 1;
+	while (i >= 0)
 	{
-		mask = 1;
-		mask = mask & c;
-		if (mask == 1)
+		usleep(10);
+		if (c & (mask << i))
 			kill(pid, SIGUSR1);
 		else 
 			kill(pid, SIGUSR2);
-		c = c >> 1;
-		i++;
+		i--;
 		can_send = 0;
 		while (can_send != 1)
 			pause();
-		//usleep(1000);
 	}
-	/*while (can_send != 1)
-		pause();*/
+
 }
 
 void	send_string(char *str, int pid)

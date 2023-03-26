@@ -40,7 +40,7 @@ void	display_binary_bis(char c)
 	printf("\n");
 }
 
-int	sendchar(char c)
+/*int	sendchar(char c)
 {
 	int	mask;
 
@@ -50,7 +50,7 @@ int	sendchar(char c)
 		return (1);
 	else
 		return (0);
-}
+}*/
 
 void	test_bitwise(char s)
 {
@@ -59,29 +59,27 @@ void	test_bitwise(char s)
 	unsigned int	mask;
 
 	c = 0;
-	i = 0;
+	i = 7;
 	printf(" c : ");
 	display_binary_bis(c);
 	printf("\n");
 	printf(" s : ");
 	display_binary_bis(s);
 	printf("\n");
-	mask = 128;
-	while (i < 7)
+	mask = 1;
+	while (i >= 0)
 	{
-		if (sendchar(s) == 1)
-			c = c | mask;
+		if (s & (mask << i))
+			c = c | (mask << i);
 		printf(" c : ");
 		display_binary_bis(c);
 		printf("\n");
 		printf(" s : ");
 		display_binary_bis(s);
 		printf("\n");
-		c = c >> 1;
-		s = s << 1;
-		i++;
+		i--;
 	}
-	mask = 0;
+	/*mask = 0;
 	while (i >= 0)
 	{
 		mask = mask << 1;
@@ -89,9 +87,9 @@ void	test_bitwise(char s)
 			mask = mask ^ 1;
 		c = c >> 1;
 		i--;
-	}
+	}*/
 	//display_binary(mask);
-	printf("%c", mask);
+	printf("%c", c);
 
 }
 

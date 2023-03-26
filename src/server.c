@@ -14,48 +14,45 @@
 
 int	markup_test;
 
+/*char	build_char(int sig, int i)
+{
+	static char	c = 0;
+	int	mask;
+
+	mask = 1;
+	
+*/
+
+	
+
+
 void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
 	static unsigned char	c;
 	static int	i;
 	int		mask;
-	int		c_pid;
 
 	(void)ucontext;
-	c_pid = (int)info->si_pid;
 	if (markup_test == 0)
 	{
 		c = 0;
-		i = 0;
+		i = 7;
 		markup_test = 1;
 	}
 	mask = 1;
-	if (i < 7)
+	if (i >= 0)
 	{
 		if (sig == SIGUSR1)
-			c = c | mask;
-		c = c << 1;
+			c = c | (mask << i);
 		usleep(10);
-		if (i < 6)
-			kill(c_pid, SIGUSR1);
-		i++;
+		kill(info->si_pid, SIGUSR1);
+		i--;
 	}
-	if (i >= 7)
+	if (i < 0)
 	{
-		mask = 0;
-		while (i >= 0)
-		{
-			mask = mask << 1;
-			if (c & 1)
-				mask = mask ^ 1;
-			c = c >> 1;
-			i--;
-		}
-		ft_printf("%c", mask);
-		if (i == 0)
-			ft_printf("\n");
+		write(1, &c, 1);
 		markup_test = 0;
-		kill(c_pid, SIGUSR1);
+		kill(info->si_pid, SIGUSR1);
 	}
 }
 
