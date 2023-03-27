@@ -12,46 +12,43 @@
 
 #include "minitalk.h"
 
-int	markup_test;
-
-/*char	build_char(int sig, int i)
+void	fill_string(char c)
 {
-	static char	c = 0;
-	int	mask;
+	static char	str[4096];
+	static int	i = 0;
 
-	mask = 1;
+	str[i] = c;
+	i++;
+	if (c == '\0')
+	{
+		write (1, str, ft_strlen(str));
+		i = 0;
+	}
+}
 	
-*/
-
-	
-
-
 void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
-	static unsigned char	c;
-	static int	i;
+	static unsigned char	c = 0;
+	static int	i = 7;
 	int		mask;
 
 	(void)ucontext;
-	if (markup_test == 0)
-	{
-		c = 0;
-		i = 7;
-		markup_test = 1;
-	}
 	mask = 1;
 	if (i >= 0)
 	{
 		if (sig == SIGUSR1)
 			c = c | (mask << i);
-		usleep(10);
-		kill(info->si_pid, SIGUSR1);
+		//usleep(10);
+		if (i > 0)
+			kill(info->si_pid, SIGUSR1);
 		i--;
 	}
 	if (i < 0)
 	{
-		write(1, &c, 1);
-		markup_test = 0;
+		//write(1, &c, 1);
+		fill_string(c);
+		i = 7;
+		c = 0;
 		kill(info->si_pid, SIGUSR1);
 	}
 }
@@ -63,7 +60,6 @@ int	main(int argc, char **argv)
 
 	struct sigaction	sa;
 
-	markup_test = 0;
 	ft_printf("P.I.D  = %d\n", getpid());
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = &handle_sig;

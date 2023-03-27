@@ -12,16 +12,17 @@
 
 #include "minitalk.h"
 
-int	can_send;
+size_t	can_send;
 
 void	handle_sig(int sig)
 {
-	//static int	bit_received = 0;
+	static int	bit_received = 0;
+
 	if (sig == SIGUSR1)
 	{
-		//bit_received++;
+		bit_received++;
 		//ft_printf("Bits received : %d\n", bit_received);
-		can_send = 1;
+		can_send += bit_received;
 	}
 }
 
@@ -38,15 +39,15 @@ void	send_char(char c, int pid)
 	mask = 1;
 	while (i >= 0)
 	{
-		usleep(10);
+		//usleep(10);
+		can_send = 0;
 		if (c & (mask << i))
 			kill(pid, SIGUSR1);
 		else 
 			kill(pid, SIGUSR2);
-		i--;
-		can_send = 0;
-		while (can_send != 1)
+		while (can_send == 0)
 			pause();
+		i--;
 	}
 
 }
@@ -54,10 +55,12 @@ void	send_char(char c, int pid)
 void	send_string(char *str, int pid)
 {
 	int	i;
+	int	end;
 
 	i = 0;
+	end = ft_strlen(str);
 	can_send = 1;
-	while (str[i])
+	while (i <= end)
 	{
 		send_char(str[i], pid);
 		i++;
@@ -67,11 +70,14 @@ void	send_string(char *str, int pid)
 
 int	main(int argc, char **argv)
 {
-	(void)argc;;
+	(void)argc;
 	
 	if (argc == 3)
 	{ 
 		send_string(argv[2], ft_atoi(argv[1]));
+		//ft_printf("Octets sent : %d\n", can_send);
+		if (can_send == (ft_strlen(argv[2]) * 8))
+			ft_printf("Chars sent : %d , String received\n", (can_send / 8));
 	}
 	else
 		ft_printf("Usage : ./client [P.I.D. server] [string to send]");
