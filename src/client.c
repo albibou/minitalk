@@ -40,9 +40,15 @@ void	send_char(char c, int pid)
 	{
 		g_can_send = 0;
 		if (c & (mask << i))
-			kill(pid, SIGUSR1);
+		{
+			if (kill(pid, SIGUSR1) < 0)
+				exit(1);
+		}
 		else
-			kill(pid, SIGUSR2);
+		{
+			if (kill(pid, SIGUSR2) < 0)
+				exit(1);
+		}
 		while (g_can_send == 0)
 			pause();
 		i--;

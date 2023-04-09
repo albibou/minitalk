@@ -48,8 +48,7 @@ char	*fill_line(char *buffer, char *line)
 		line = malloc(sizeof(char));
 		line[0] = 0;
 	}
-	temp = ft_strjoinmod(line, buffer);
-	free(buffer);
+	temp = ft_strjoinmod(line, buffer );
 	free(line);
 	return (temp);
 }
@@ -88,14 +87,14 @@ void	handle_string(char c)
 	if (!buffer)
 		return ;
 	buffer[i] = c;
-	i++;
 	if (i == 4094 && c != '\0')
 	{
-		buffer[++i] = '\0';
+		buffer[i + 1] = '\0';
 		line = fill_line(buffer, line);
 		i = 0;
 		join++;
 	}
+	i++;
 	if (c == '\0')
 	{
 		if (join > 0)
@@ -116,7 +115,7 @@ void	handle_string(char c)
 	}
 }
 
-/*void	fill_string(char c)
+/*void	handle_string(char c)
 {
 	static char	str[50000];
 	static int	i = 0;
@@ -142,8 +141,6 @@ void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 	{
 		if (sig == SIGUSR1)
 			c = c | (mask << i);
-		if (i > 0)
-			kill(info->si_pid, SIGUSR1);
 		i--;
 	}
 	if (i < 0)
@@ -151,8 +148,8 @@ void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 		handle_string(c);
 		i = 7;
 		c = 0;
-		kill(info->si_pid, SIGUSR1);
 	}
+	kill(info->si_pid, SIGUSR1);
 }
 
 int	main(void)
