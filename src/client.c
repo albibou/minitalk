@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:43:08 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 19:14:05 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/09 19:57:16 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	send_char(char c, int pid)
 {
 	int					i;
 	int					mask;
-	//unsigned int					res;
 	
 	i = 7;
 	mask = 1;
@@ -43,8 +42,6 @@ void	send_char(char c, int pid)
 		}
 		while (g_can_send == 0)
 		{
-			//res = sleep(2);
-			//ft_printf("sleep res : %d\n", res);
 			if (sleep(2) == 0)
 				exit(1);
 		}
