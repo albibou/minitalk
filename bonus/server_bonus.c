@@ -1,18 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/14 14:40:23 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 19:56:37 by atardif          ###   ########.fr       */
+/*   Created: 2023/04/09 17:27:13 by atardif           #+#    #+#             */
+/*   Updated: 2023/04/09 17:27:16 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-int	g_client_pid;
+char	*ft_strjoinmod(char *s1, char *s2)
+{
+	char	*dest;
+	int		i;
+	int		y;
+
+	i = 0;
+	y = 0;
+	if (!s1 || !s2)
+		return (NULL);
+	dest = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!dest)
+		return (NULL);
+	while (s1[i])
+	{
+		dest[i] = s1[i];
+		i++;
+	}
+	while (s2[y])
+	{
+		dest[i + y] = s2[y];
+		y++;
+	}
+	dest[i + y] = 0;
+	return (dest);
+}
 
 char	*fill_line(char *buffer, char *line)
 {
@@ -28,6 +53,28 @@ char	*fill_line(char *buffer, char *line)
 	return (temp);
 }
 
+/*void	handle_string(char c)
+{
+	char	*buffer;
+	static char	*line;
+	static int	i;
+
+	buffer = malloc(sizeof(char) * (2));
+	if (!buffer)
+		return ;
+	buffer[0] = c;
+	buffer[1] = '\0';
+	if (c == '\0')
+	{
+		write(1, line, ft_strlen(line));
+		i = 0;
+		//free(line);
+		return ;
+	}
+	line = fill_line(buffer, line);
+	free(buffer);
+}*/
+
 void	handle_string(char c)
 {
 	static char	*buffer;
@@ -36,11 +83,11 @@ void	handle_string(char c)
 	static int	join = 0;
 
 	if (i == 0)
-		buffer = malloc(sizeof(char) * 8192);
+		buffer = malloc(sizeof(char) * 4096);
 	if (!buffer)
 		return ;
 	buffer[i] = c;
-	if (i == 8190 && c != '\0')
+	if (i == 4094 && c != '\0')
 	{
 		buffer[i + 1] = '\0';
 		line = fill_line(buffer, line);
@@ -68,6 +115,20 @@ void	handle_string(char c)
 	}
 }
 
+/*void	handle_string(char c)
+{
+	static char	str[50000];
+	static int	i = 0;
+
+	str[i] = c;
+	i++;
+	if (c == '\0')
+	{
+		write (1, str, ft_strlen(str));
+		i = 0;
+	}
+}*/
+
 void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
 	static unsigned char	c = 0;
@@ -76,8 +137,6 @@ void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 
 	(void)ucontext;
 	mask = 1;
-	/*if ( info->si_pid != g_client_pid)
-	g_client_pid = info->si_pid;*/
 	if (i >= 0)
 	{
 		if (sig == SIGUSR1)
