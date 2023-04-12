@@ -6,11 +6,13 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 19:46:07 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 19:50:44 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/11 12:21:40 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	*ft_strjoinmod(char *s1, char *s2)
+#include "minitalk.h"
+
+char	*ft_strjoinmod2(char *s1, char *s2)
 {
 	char	*dest;
 	int		i;

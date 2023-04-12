@@ -1,4 +1,5 @@
-SERV_SRCS	= ./src/server.c
+SERV_SRCS	= ./src/server.c \
+		  ./src/server_utils.c
 
 SERV_OBJS	= ${SERV_SRCS:.c=.o}
 

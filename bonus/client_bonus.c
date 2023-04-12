@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 17:27:05 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 17:27:07 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/12 17:24:07 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,21 @@
 
 volatile size_t	g_can_send;
 
-void	handle_sig(int sig)
+void	exit_client(int tmp)
+{
+	if (tmp == 1)
+	{
+		ft_printf("Wrong PID, try again.");
+		exit(1);
+	}
+}
+
+void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
 	static int	bit_received = 0;
 
+	(void)ucontext;
+	(void)info;
 	if (sig == SIGUSR1)
 	{
 		bit_received++;
@@ -27,30 +38,26 @@ void	handle_sig(int sig)
 
 void	send_char(char c, int pid)
 {
-	int					i;
-	int					mask;
-	struct sigaction	sa;
+	int			i;
+	static int	mask = 1;
 
-	sa.sa_flags = 0;
-	sa.sa_handler = &handle_sig;
-	sigaction(SIGUSR1, &sa, NULL);
 	i = 7;
-	mask = 1;
 	while (i >= 0)
 	{
 		g_can_send = 0;
 		if (c & (mask << i))
 		{
 			if (kill(pid, SIGUSR1) < 0)
-				exit(1);
+				exit_client(1);
 		}
 		else
 		{
 			if (kill(pid, SIGUSR2) < 0)
-				exit(1);
+				exit_client(1);
 		}
 		while (g_can_send == 0)
-			pause();
+		{
+		}
 		i--;
 	}
 }
@@ -72,11 +79,18 @@ void	send_string(char *str, int pid)
 
 int	main(int argc, char **argv)
 {
-	if (argc == 3)
+	struct sigaction	sa;
+
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO | SA_RESTART;
+	sa.sa_sigaction = &handle_sig;
+	sigaction(SIGUSR1, &sa, NULL);
+	if (argc == 3 && ft_strlen(argv[2]) != 0)
 	{
 		send_string(argv[2], ft_atoi(argv[1]));
 		if (g_can_send == (ft_strlen(argv[2]) + 1) * 8)
-			ft_printf("Chars sent : %d , String received\n", (g_can_send / 8) - 1);
+			ft_printf("Chars sent : %d , String received\n",
+				(g_can_send / 8) - 1);
 	}
 	else
 		ft_printf("Usage : ./client [P.I.D. server] [string to send]");

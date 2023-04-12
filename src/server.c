@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:40:23 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 19:56:37 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/11 16:48:07 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*fill_line(char *buffer, char *line)
 		line = malloc(sizeof(char));
 		line[0] = 0;
 	}
-	temp = ft_strjoinmod(line, buffer );
+	temp = ft_strjoinmod2(line, buffer);
 	free(line);
 	return (temp);
 }
@@ -87,6 +87,7 @@ void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 	if (i < 0)
 	{
 		handle_string(c);
+		//write(1, &c, 1);
 		i = 7;
 		c = 0;
 	}

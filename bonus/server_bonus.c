@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 17:27:13 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 17:27:16 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/12 18:13:25 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,27 +53,20 @@ char	*fill_line(char *buffer, char *line)
 	return (temp);
 }
 
-/*void	handle_string(char c)
+void	print_line(char *buffer, char *line, int i, int join)
 {
-	char	*buffer;
-	static char	*line;
-	static int	i;
-
-	buffer = malloc(sizeof(char) * (2));
-	if (!buffer)
-		return ;
-	buffer[0] = c;
-	buffer[1] = '\0';
-	if (c == '\0')
+	if (join > 0)
 	{
-		write(1, line, ft_strlen(line));
+		write(1 , line, ft_strlen(line));
 		i = 0;
-		//free(line);
-		return ;
+		join = 0;
 	}
-	line = fill_line(buffer, line);
-	free(buffer);
-}*/
+	if (join == 0)
+	{
+		write(1, buffer, ft_strlen(buffer));
+		i = 0;
+	}
+}
 
 void	handle_string(char c)
 {
@@ -97,7 +90,12 @@ void	handle_string(char c)
 	i++;
 	if (c == '\0')
 	{
-		if (join > 0)
+		print_line(buffer, line, i, join);
+		i = 0;
+		join = 0;
+		free(line);
+		free(buffer);
+		/*if (join > 0)
 		{
 			write(1 , line, ft_strlen(line));
 			free(line);
@@ -111,45 +109,28 @@ void	handle_string(char c)
 			free(buffer);
 			buffer = NULL;
 			i = 0;
-		}
+		}*/
 	}
 }
 
-/*void	handle_string(char c)
-{
-	static char	str[50000];
-	static int	i = 0;
-
-	str[i] = c;
-	i++;
-	if (c == '\0')
-	{
-		write (1, str, ft_strlen(str));
-		i = 0;
-	}
-}*/
-
 void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
-	static unsigned char	c = 0;
+	static char	c = 0;
 	static int				i = 7;
-	int						mask;
+	static int						mask = 1;
 
 	(void)ucontext;
-	mask = 1;
-	if (i >= 0)
-	{
-		if (sig == SIGUSR1)
-			c = c | (mask << i);
-		i--;
-	}
+	if (sig == SIGUSR1)
+		c = c | (mask << i);
+	i--;
 	if (i < 0)
 	{
 		handle_string(c);
 		i = 7;
 		c = 0;
 	}
-	kill(info->si_pid, SIGUSR1);
+	if (kill(info->si_pid, SIGUSR1) < 0)
+		exit(1);
 }
 
 int	main(void)
@@ -158,7 +139,7 @@ int	main(void)
 
 	ft_printf("P.I.D  = %d\n", getpid());
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO | SA_RESTART;
 	sa.sa_sigaction = &handle_sig;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);

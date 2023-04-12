@@ -6,7 +6,7 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 14:43:08 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/09 19:57:16 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/11 14:44:59 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,11 @@ void	send_char(char c, int pid)
 {
 	int					i;
 	int					mask;
-	
+	struct sigaction	sa;
+
+	sa.sa_flags = 0;
+	sa.sa_handler = &handle_sig;
+	sigaction(SIGUSR1, &sa, NULL);
 	i = 7;
 	mask = 1;
 	while (i >= 0)
@@ -42,8 +46,12 @@ void	send_char(char c, int pid)
 		}
 		while (g_can_send == 0)
 		{
-			if (sleep(2) == 0)
+			if (sleep(4) == 0)
+			{
+				ft_printf("Error server side \n");
 				exit(1);
+			}
+			//pause();
 		}
 		i--;
 	}
@@ -66,11 +74,11 @@ void	send_string(char *str, int pid)
 
 int	main(int argc, char **argv)
 {
-	struct sigaction	sa;
+	/*struct sigaction	sa;
 
 	sa.sa_flags = 0;
 	sa.sa_handler = &handle_sig;
-	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR1, &sa, NULL);*/
 	if (argc == 3 && ft_strlen(argv[2]) != 0)
 	{
 		send_string(argv[2], ft_atoi(argv[1]));
