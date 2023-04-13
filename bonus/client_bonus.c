@@ -6,11 +6,11 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 17:27:05 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/12 17:24:07 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/13 15:26:09 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
 volatile size_t	g_can_send;
 
@@ -18,7 +18,7 @@ void	exit_client(int tmp)
 {
 	if (tmp == 1)
 	{
-		ft_printf("Wrong PID, try again.");
+		ft_printf("Wrong PID, try again.\n");
 		exit(1);
 	}
 }
@@ -33,6 +33,11 @@ void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 	{
 		bit_received++;
 		g_can_send += bit_received;
+	}
+	else if (sig == SIGUSR2)
+	{
+		ft_printf("Error server side. Relaunch everything.\n");
+		exit(1);
 	}
 }
 

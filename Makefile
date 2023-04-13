@@ -1,5 +1,5 @@
 SERV_SRCS	= ./src/server.c \
-		  ./src/server_utils.c
+		  ./src/server_utils.c \
 
 SERV_OBJS	= ${SERV_SRCS:.c=.o}
 
@@ -7,7 +7,8 @@ CLIENT_SRCS	= ./src/client.c
 
 CLIENT_OBJS	= ${CLIENT_SRCS:.c=.o}
 
-SERV_BONUS_SRCS	= ./bonus/server_bonus.c
+SERV_BONUS_SRCS	= ./bonus/server_bonus.c \
+		  ./bonus/server_utils_bonus.c \
 
 SERV_BONUS_OBJS	=  ${SERV_BONUS_SRCS:.c=.o}
 
@@ -45,7 +46,7 @@ ${NAME} :	${SERV_OBJS}
 		clear
 		${CC} -o ${NAME} ${CFLAGS} -g  ${SERV_OBJS} ${LIBFT}
 		clear
-	        @toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
+		@toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
 
 ${NAME2} :	${CLIENT_OBJS}
 		clear
@@ -54,19 +55,24 @@ ${NAME2} :	${CLIENT_OBJS}
 		clear
 		${CC} -o ${NAME2} ${CFLAGS} -g  ${CLIENT_OBJS} ${LIBFT}
 		clear
-	        @toilet -f pagga.tlf --gay "Enjoy ${NAME2} !"
+		@toilet -f pagga.tlf --gay "Enjoy ${NAME2} !"
 
 ${BONUS_NAME} :	${SERV_BONUS_OBJS}
+		clear
+		@toilet -f pagga.tlf --gay "Libft"
 		make all -C libft
+		clear
 		${CC} -o ${BONUS_NAME} ${CFLAGS} -g ${SERV_BONUS_OBJS} ${LIBFT}
 		clear
-		@toilet -f pagga.tlf --gay "Enjoy ${BONUS_NAME}"
+		@toilet -f pagga.tlf --gay "Enjoy ${BONUS_NAME} !"
 
 ${BONUS_NAME2} :	${CLIENT_BONUS_OBJS}
+			clear
+			@toilet -f pagga.tlf --gay "Libft"
 			make all -C libft
 			${CC} -o ${BONUS_NAME2} ${CFLAGS} -g ${CLIENT_BONUS_OBJS} ${LIBFT}
 			clear
-			@toilet -f pagga.tlf --gay "Enjoy ${BONUS_NAME2}"
+			@toilet -f pagga.tlf --gay "Enjoy ${BONUS_NAME2} !"
 
 all :		${NAME} ${NAME2}
 		clear

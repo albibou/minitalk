@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/13 15:28:42 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/13 15:29:03 by atardif          ###   ########.fr       */
+/*   Created: 2023/04/09 17:27:05 by atardif           #+#    #+#             */
+/*   Updated: 2023/04/13 15:20:21 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,13 @@ int	main(int argc, char **argv)
 	sa.sa_flags = SA_SIGINFO | SA_RESTART;
 	sa.sa_sigaction = &handle_sig;
 	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	if (argc == 3 && ft_strlen(argv[2]) != 0)
 	{
 		send_string(argv[2], ft_atoi(argv[1]));
+		if (g_can_send == (ft_strlen(argv[2]) + 1) * 8)
+			ft_printf("Chars sent : %d , String received\n",
+				(g_can_send / 8) - 1);
 	}
 	else
 		ft_printf("Usage : ./client [P.I.D. server] [string to send]");

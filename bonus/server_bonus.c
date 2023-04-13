@@ -6,40 +6,13 @@
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 17:27:13 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/12 18:13:25 by atardif          ###   ########.fr       */
+/*   Updated: 2023/04/13 15:24:42 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
-char	*ft_strjoinmod(char *s1, char *s2)
-{
-	char	*dest;
-	int		i;
-	int		y;
-
-	i = 0;
-	y = 0;
-	if (!s1 || !s2)
-		return (NULL);
-	dest = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
-	if (!dest)
-		return (NULL);
-	while (s1[i])
-	{
-		dest[i] = s1[i];
-		i++;
-	}
-	while (s2[y])
-	{
-		dest[i + y] = s2[y];
-		y++;
-	}
-	dest[i + y] = 0;
-	return (dest);
-}
-
-char	*fill_line(char *buffer, char *line)
+static char	*fill_line(char *buffer, char *line)
 {
 	char	*temp;
 
@@ -48,33 +21,39 @@ char	*fill_line(char *buffer, char *line)
 		line = malloc(sizeof(char));
 		line[0] = 0;
 	}
-	temp = ft_strjoinmod(line, buffer );
+	temp = ft_strjoinmod(line, buffer);
 	free(line);
 	return (temp);
 }
 
-void	print_line(char *buffer, char *line, int i, int join)
+static void	print_line(char **buffer, char **line, int *i, int *join)
 {
-	if (join > 0)
+	if (*join > 0)
 	{
-		write(1 , line, ft_strlen(line));
-		i = 0;
-		join = 0;
+		write(1, *line, ft_strlen(*line));
+		free(*line);
+		*line = NULL;
+		*i = 0;
+		*join = 0;
 	}
-	if (join == 0)
+	if (*join == 0)
 	{
-		write(1, buffer, ft_strlen(buffer));
-		i = 0;
+		write(1, *buffer, ft_strlen(*buffer));
+		free(*buffer);
+		*buffer = NULL;
+		*i = 0;
 	}
 }
 
-void	handle_string(char c)
+static void	handle_string(char c, int code, int client_pid)
 {
 	static char	*buffer;
 	static char	*line;
 	static int	i = 0;
 	static int	join = 0;
 
+	if (code == 1)
+		free_exit(&buffer, &line, client_pid);
 	if (i == 0)
 		buffer = malloc(sizeof(char) * 4096);
 	if (!buffer)
@@ -89,48 +68,28 @@ void	handle_string(char c)
 	}
 	i++;
 	if (c == '\0')
-	{
-		print_line(buffer, line, i, join);
-		i = 0;
-		join = 0;
-		free(line);
-		free(buffer);
-		/*if (join > 0)
-		{
-			write(1 , line, ft_strlen(line));
-			free(line);
-			line = NULL;
-			i = 0;
-			join = 0;
-		}
-		if (join == 0)
-		{
-			write(1, buffer, ft_strlen(buffer));
-			free(buffer);
-			buffer = NULL;
-			i = 0;
-		}*/
-	}
+		print_line(&buffer, &line, &i, &join);
 }
 
-void	handle_sig(int sig, siginfo_t *info, void *ucontext)
+static void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
 	static char	c = 0;
-	static int				i = 7;
-	static int						mask = 1;
+	static int	i = 7;
+	int			mask;
 
 	(void)ucontext;
+	mask = 1;
 	if (sig == SIGUSR1)
 		c = c | (mask << i);
 	i--;
 	if (i < 0)
 	{
-		handle_string(c);
+		handle_string(c, 0, info->si_pid);
 		i = 7;
 		c = 0;
 	}
 	if (kill(info->si_pid, SIGUSR1) < 0)
-		exit(1);
+		handle_string(c, 1, info->si_pid);
 }
 
 int	main(void)

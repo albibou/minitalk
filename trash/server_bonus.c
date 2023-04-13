@@ -1,18 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/13 15:26:56 by atardif           #+#    #+#             */
-/*   Updated: 2023/04/13 15:27:03 by atardif          ###   ########.fr       */
+/*   Created: 2023/04/09 17:27:13 by atardif           #+#    #+#             */
+/*   Updated: 2023/04/13 14:27:29 by atardif          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-static char	*fill_line(char *buffer, char *line)
+void	free_exit(char **buffer, char **line, int client_pid)
+{
+	free(*line);
+	*line = NULL;
+	free(*buffer);
+	*buffer = NULL;
+	if (kill(client_pid, SIGUSR2) < 0)
+		exit(1);
+	exit(1);
+}
+
+char	*fill_line(char *buffer, char *line)
 {
 	char	*temp;
 
@@ -26,7 +37,7 @@ static char	*fill_line(char *buffer, char *line)
 	return (temp);
 }
 
-static void	print_line(char **buffer, char **line, int *i, int *join)
+void	print_line(char **buffer, char **line, int *i, int *join)
 {
 	if (*join > 0)
 	{
@@ -45,7 +56,7 @@ static void	print_line(char **buffer, char **line, int *i, int *join)
 	}
 }
 
-static void	handle_string(char c, int code, int client_pid)
+void	handle_string(char c, int code, int client_pid)
 {
 	static char	*buffer;
 	static char	*line;
@@ -71,7 +82,7 @@ static void	handle_string(char c, int code, int client_pid)
 		print_line(&buffer, &line, &i, &join);
 }
 
-static void	handle_sig(int sig, siginfo_t *info, void *ucontext)
+void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 {
 	static char	c = 0;
 	static int	i = 7;
@@ -79,6 +90,8 @@ static void	handle_sig(int sig, siginfo_t *info, void *ucontext)
 
 	(void)ucontext;
 	mask = 1;
+	if (sig == SIGINT)
+		handle_string(c, 1, info->si_pid);
 	if (sig == SIGUSR1)
 		c = c | (mask << i);
 	i--;
@@ -102,6 +115,7 @@ int	main(void)
 	sa.sa_sigaction = &handle_sig;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
+	sigaction(SIGINT, &sa, NULL);
 	while (1)
 		pause();
 	return (0);
